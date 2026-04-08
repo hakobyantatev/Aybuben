@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Բացահայտողների Միջոցառման Հրավեր</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Armenian', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            background: linear-gradient(180deg, #4da0cc 0%, #a1d7f2 100%);
+            height: 100vh;
+        }
+
+        /* Արև */
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #facc15;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #fde047;
+            z-index: 1;
+        }
+
+        /* Ամպեր */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: moveClouds linear infinite;
+        }
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        .cloud1 { width: 80px; height: 30px; top: 10%; animation-duration: 25s; }
+        .cloud2 { width: 120px; height: 40px; top: 20%; animation-duration: 40s; left: -200px; }
+
+        @keyframes moveClouds {
+            from { transform: translateX(-350px); }
+            to { transform: translateX(130vw); }
+        }
+
+        /* Ծով */
+        .ocean {
+            height: 25%;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: #0077be;
+            z-index: 5;
+        }
+
+        .wave {
+            background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg') repeat-x;
+            position: absolute;
+            top: -60px;
+            width: 6400px;
+            height: 150px;
+            animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+        }
+
+        @keyframes wave {
+            0% { margin-left: 0; }
+            100% { margin-left: -1600px; }
+        }
+
+        /* Նավակ */
+        .boat-container {
+            position: absolute;
+            bottom: 20px;
+            left: -400px; 
+            width: 300px; /* Փոքրացված սկզբնական չափս հեռախոսի համար */
+            animation: sailToIsland 12s forwards linear, bobbing 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        .boat-img { width: 100%; display: block; }
+
+        @keyframes sailToIsland {
+            0% { left: -400px; }
+            100% { left: calc(100vw - 280px); }
+        }
+
+        @keyframes bobbing {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        /* Հրավիրատոմս */
+        #invitation-card {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            border: 6px solid #ef4444;
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1s ease-in-out;
+        }
+
+        #invitation-card.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .title { color: #1e40af; font-size: 1.4rem; font-weight: bold; margin-bottom: 1rem; }
+        .details { color: #1f2937; font-size: 1.1rem; line-height: 1.6; }
+
+        /* ՍԱ ԿԱՐԵՎՈՐ Է. Մեծ էկրանների (համակարգչի) համար կարգավորումներ */
+        @media (min-width: 768px) {
+            .sun { width: 100px; height: 100px; top: 40px; right: 60px; }
+            .boat-container { width: 500px; left: -600px; }
+            @keyframes sailToIsland {
+                0% { left: -600px; }
+                100% { left: calc(100vw - 450px); }
+            }
+            .title { font-size: 1.8rem; }
+            .details { font-size: 1.3rem; }
+            #invitation-card { padding: 2.5rem; width: 85%; }
+        }
+
+        .sound-hint {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 100;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body onclick="startAudio()">
+
+    <div class="sound-hint">🎶 Սեղմեք ձայնի համար</div>
+
+    <audio id="background-song" loop>
+        <source src="Լողա Լողա Մեր Լույս Նավակ (1).mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="sun"></div>
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+    <div id="invitation-card">
+        <p class="title">Հարգելի՛ գործընկերներ,</p>
+        <p class="details">
+            Սիրով հրավիրում ենք Ձեզ ներկա գտնվելու <b>«Բացահայտողների»</b> միջոցառմանը, որը տեղի կունենա <b>ապրիլի 15-ին, ժամը 13։00-ին</b>:
+            <br><br>
+            Սիրով սպասում ենք Ձեզ միասին նավարկելու այբուբենի ծովում։
+        </p>
+    </div>
+
+    <div class="boat-container">
+        <img src="nav.png" alt="Նավակ" class="boat-img">
+    </div>
+
+    <div class="ocean">
+        <div class="wave"></div>
+    </div>
+
+    <script>
+        function startAudio() {
+            const audio = document.getElementById('background-song');
+            audio.play();
+            document.querySelector('.sound-hint').style.display = 'none';
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('invitation-card').classList.add('show');
+            }, 11500);
+        });
+    </script>
+</body>
+</html>
